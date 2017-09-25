@@ -24,9 +24,19 @@ class App extends Component {
     auth.onAuthStateChanged(user => {
       this.setState({ user });
 
-      // this.usersRef.child(user.uid).val().then(user => {
-        
-      // })
+      let userRef = this.usersRef.child(user.uid);
+
+      // check if user is saved and save it if needed
+      userRef.once('value').then(snapshot => {
+        if (snapshot.val()) return;
+        const userInfo = pick(user, ['displayName', 'photoURL', 'email']);
+        userRef.set(userInfo);
+      });
+
+      // listen for new users
+      this.usersRef.on('value', snapshot => {
+        this.setState({ users: snapshot.val() });
+      });
     })
   }
 
