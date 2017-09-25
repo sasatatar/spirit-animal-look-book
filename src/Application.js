@@ -16,6 +16,18 @@ class App extends Component {
       user: null,
       users: {}
     };
+
+    this.usersRef = database.ref('/users');
+  }
+
+  componentDidMount() {
+    auth.onAuthStateChanged(user => {
+      this.setState({ user });
+
+      // this.usersRef.child(user.uid).val().then(user => {
+        
+      // })
+    })
   }
 
   render() {
@@ -26,7 +38,20 @@ class App extends Component {
         <header className="App--header">
           <h1>Social Animals</h1>
         </header>
-        <SignIn />
+        {
+          user 
+          ? <div>
+              <section className="ProfileCards">
+                {
+                  map(users, (user, uid) => {
+                    return <ProfileCard key={uid} user={user} uid={uid} />
+                  })
+                }
+              </section>
+              <CurrentUser user={user} />
+            </div>
+          : <SignIn />
+        }
       </div>
     );
   }
